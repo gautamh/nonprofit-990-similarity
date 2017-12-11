@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def nearest_neighbor(data, col_name, col_value):
+def nearest_neighbor(data, col_name, col_value, exclude_cols=[]):
     entity_index = np.where(data[col_name] == col_value)[0][0]
-    entity_dist = cdist([data.iloc[entity_index]], data)
+    entity_dist = cdist([data.drop(exclude_cols, axis=1).iloc[entity_index]], data.drop(exclude_cols, axis=1))
     entity_dist = [x if x != 0 else sys.maxint for x in entity_dist[0]]
     nearest_neighbor_index = argmin(entity_dist)
     return data.iloc[nearest_neighbor_index]
