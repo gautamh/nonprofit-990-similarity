@@ -24,12 +24,14 @@ def load_data(filepath):
     # shift columns so that all data is positive (for log transformation)
     mins = [(col, df2[[col]].min()) for col in df2.columns]
     for col, min_val in mins:
+        if df[col].dtype != np.number:
+            continue
         if min_val[0] < 1:
             df2[[col]] = df2[[col]].apply(lambda x: x - min_val[0] + 1)
 
     LOG_COLUMNS = [u'GrossReceiptsAmt', u'VotingMembersGoverningBodyCnt', u'VotingMembersIndependentCnt', u'TotalEmployeeCnt', u'CYContributionsGrantsAmt', u'CYGrantsAndSimilarPaidAmt', u'CYBenefitsPaidToMembersAmt', u'CYSalariesCompEmpBnftPaidAmt', u'CYTotalFundraisingExpenseAmt', u'IRPDocumentCnt', u'IRPDocumentW2GCnt', u'CYProgramServiceRevenueAmt', u'CYTotalProfFndrsngExpnsAmt', u'TotalAssetsEOYAmt', u'TotalGrossUBIAmt']
 
     # apply log transformation
-    df2[LOG_COLUMNS] = df2[LOG_COLUMNS].apply(lambda x: np.log(x))
+    df2[LOG_COLUMNS] = df2[LOG_COLUMNS].apply(lambda x: np.log1p(x))
     
     return df2
