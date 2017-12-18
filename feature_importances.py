@@ -19,4 +19,7 @@ rf = RandomForestClassifier(max_depth=2, random_state=0)
 
 rf.fit(features, labels)
 
-print(rf.feature_importances_)
+weights = rf.feature_importances_
+
+print(common_utils.nearest_neighbor(df2, 'EIN', 560532129, ['EIN', 'NTEE_CD'], weights))
+print(common_utils.nearest_neighbor(df2, 'EIN', 560532129, ['EIN', 'NTEE_CD']))
