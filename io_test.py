@@ -11,7 +11,8 @@ import glob
 form_990_path_regex = "/mnt/c/Users/Gautam/form_990/*.xml"
 outfile = "/mnt/c/Users/Gautam/nonprofit_features.csv"
 
-EXTRACTABLE_FEATURE_FIELDS_STR = """{http://www.irs.gov/efile}GrossReceiptsAmt,
+NUM_FEATURE_FIELDS_STR = """
+{http://www.irs.gov/efile}GrossReceiptsAmt,
 {http://www.irs.gov/efile}VotingMembersGoverningBodyCnt,
 {http://www.irs.gov/efile}VotingMembersIndependentCnt,
 {http://www.irs.gov/efile}TotalEmployeeCnt,
@@ -45,7 +46,86 @@ EXTRACTABLE_FEATURE_FIELDS_STR = """{http://www.irs.gov/efile}GrossReceiptsAmt,
 {http://www.irs.gov/efile}PYContributionsGrantsAmt,
 {http://www.irs.gov/efile}TotalProgramServiceExpensesAmt"""
 
-EXTRACTABLE_FEATURE_FIELDS = EXTRACTABLE_FEATURE_FIELDS_STR.replace("\n", "").split(",")
+IND_FEATURE_FIELDS_STR = """
+{http://www.irs.gov/efile}GroupReturnForAffiliatesInd,
+{http://www.irs.gov/efile}DescribedInSection501c3Ind,
+{http://www.irs.gov/efile}ScheduleBRequiredInd,
+{http://www.irs.gov/efile}PoliticalCampaignActyInd,
+{http://www.irs.gov/efile}DonorAdvisedFundInd,
+{http://www.irs.gov/efile}ConservationEasementsInd,
+{http://www.irs.gov/efile}CollectionsOfArtInd,
+{http://www.irs.gov/efile}CreditCounselingInd,
+{http://www.irs.gov/efile}TempOrPermanentEndowmentsInd,
+{http://www.irs.gov/efile}ReportLandBuildingEquipmentInd,
+{http://www.irs.gov/efile}ReportInvestmentsOtherSecInd,
+{http://www.irs.gov/efile}ReportProgramRelatedInvstInd,
+{http://www.irs.gov/efile}ReportOtherAssetsInd,
+{http://www.irs.gov/efile}ReportOtherLiabilitiesInd,
+{http://www.irs.gov/efile}IncludeFIN48FootnoteInd,
+{http://www.irs.gov/efile}IndependentAuditFinclStmtInd,
+{http://www.irs.gov/efile}ConsolidatedAuditFinclStmtInd,
+{http://www.irs.gov/efile}SchoolOperatingInd,
+{http://www.irs.gov/efile}ForeignOfficeInd,
+{http://www.irs.gov/efile}ForeignActivitiesInd,
+{http://www.irs.gov/efile}MoreThan5000KToOrgInd,
+{http://www.irs.gov/efile}MoreThan5000KToIndividualsInd,
+{http://www.irs.gov/efile}ProfessionalFundraisingInd,
+{http://www.irs.gov/efile}FundraisingActivitiesInd,
+{http://www.irs.gov/efile}GamingActivitiesInd,
+{http://www.irs.gov/efile}OperateHospitalInd,
+{http://www.irs.gov/efile}GrantsToOrganizationsInd,
+{http://www.irs.gov/efile}GrantsToIndividualsInd,
+{http://www.irs.gov/efile}ScheduleJRequiredInd,
+{http://www.irs.gov/efile}TaxExemptBondsInd,
+{http://www.irs.gov/efile}LoanOutstandingInd,
+{http://www.irs.gov/efile}GrantToRelatedPersonInd,
+{http://www.irs.gov/efile}BusinessRlnWithOrgMemInd,
+{http://www.irs.gov/efile}BusinessRlnWithFamMemInd,
+{http://www.irs.gov/efile}BusinessRlnWithOfficerEntInd,
+{http://www.irs.gov/efile}DeductibleNonCashContriInd,
+{http://www.irs.gov/efile}DeductibleArtContributionInd,
+{http://www.irs.gov/efile}TerminateOperationsInd,
+{http://www.irs.gov/efile}PartialLiquidationInd,
+{http://www.irs.gov/efile}DisregardedEntityInd,
+{http://www.irs.gov/efile}RelatedEntityInd,
+{http://www.irs.gov/efile}RelatedOrganizationCtrlEntInd,
+{http://www.irs.gov/efile}ActivitiesConductedPrtshpInd,
+{http://www.irs.gov/efile}ScheduleORequiredInd,
+{http://www.irs.gov/efile}UnrelatedBusIncmOverLimitInd,
+{http://www.irs.gov/efile}ForeignFinancialAccountInd,
+{http://www.irs.gov/efile}ProhibitedTaxShelterTransInd,
+{http://www.irs.gov/efile}TaxablePartyNotificationInd,
+{http://www.irs.gov/efile}NondeductibleContributionsInd,
+{http://www.irs.gov/efile}IndoorTanningServicesInd,
+{http://www.irs.gov/efile}FamilyOrBusinessRlnInd,
+{http://www.irs.gov/efile}DelegationOfMgmtDutiesInd,
+{http://www.irs.gov/efile}ChangeToOrgDocumentsInd,
+{http://www.irs.gov/efile}MaterialDiversionOrMisuseInd,
+{http://www.irs.gov/efile}MembersOrStockholdersInd,
+{http://www.irs.gov/efile}ElectionOfBoardMembersInd,
+{http://www.irs.gov/efile}DecisionsSubjectToApprovaInd,
+{http://www.irs.gov/efile}MinutesOfGoverningBodyInd,
+{http://www.irs.gov/efile}OfficerMailingAddressInd,
+{http://www.irs.gov/efile}LocalChaptersInd,
+{http://www.irs.gov/efile}Form990ProvidedToGvrnBodyInd,
+{http://www.irs.gov/efile}ConflictOfInterestPolicyInd,
+{http://www.irs.gov/efile}WhistleblowerPolicyInd,
+{http://www.irs.gov/efile}DocumentRetentionPolicyInd,
+{http://www.irs.gov/efile}InvestmentInJointVentureInd,
+{http://www.irs.gov/efile}FormerOfcrEmployeesListedInd,
+{http://www.irs.gov/efile}TotalCompGreaterThan150KInd,
+{http://www.irs.gov/efile}CompensationFromOtherSrcsInd,
+{http://www.irs.gov/efile}AccountantCompileOrReviewInd,
+{http://www.irs.gov/efile}FSAuditedInd,
+{http://www.irs.gov/efile}MinutesOfCommitteesInd,
+{http://www.irs.gov/efile}CompensationProcessCEOInd,
+{http://www.irs.gov/efile}CompensationProcessOtherInd,
+{http://www.irs.gov/efile}SignificantNewProgramSrvcInd,
+{http://www.irs.gov/efile}SignificantChangeInd,
+{http://www.irs.gov/efile}SubjectToProxyTaxInd,
+"""
+
+NUM_FEATURE_FIELDS = NUM_FEATURE_FIELDS_STR.replace("\n", "").split(",")
 
 counter = 0
 num_fields_counts = {}
@@ -71,6 +151,19 @@ def get_numfields_from_filing(filing):
         print(str(e))
     return num_fields
 
+def get_nonnumfields_from_filing(filing):
+    num_fields = []
+    try:
+        root = etree.fromstring(filing)
+        form_990 = root.find("./{http://www.irs.gov/efile}ReturnData/{http://www.irs.gov/efile}IRS990")
+        if (form_990 is not None and len(form_990) > 0):
+            for child in form_990:
+                if child.text is not None and not child.text.isdigit() or child.tag.endswith('Ind'):
+                    num_fields.append(child.tag)
+    except etree.ParseError as e:
+        print(str(e))
+    return num_fields
+
 def get_num_features_from_filing(filing):
     num_field_features = []
     try:
@@ -79,7 +172,7 @@ def get_num_features_from_filing(filing):
         form_990 = root.find("./{http://www.irs.gov/efile}ReturnData/{http://www.irs.gov/efile}IRS990")
         if (form_990 is not None and len(form_990) > 0):
             num_field_features.append(ein)
-            for feature_field_tag in EXTRACTABLE_FEATURE_FIELDS:
+            for feature_field_tag in NUM_FEATURE_FIELDS:
                 feature_field = form_990.find(feature_field_tag)
                 if feature_field is not None:
                     num_field_features.append(feature_field.text)
@@ -104,7 +197,7 @@ async def produce(queue, filename):
     contents = ''
     async with aiofiles.open(filename, mode='r') as f:
         contents = await f.read()
-    await queue.put(get_num_features_from_filing(contents))
+    await queue.put(get_nonnumfields_from_filing(contents))
 
 async def consume(queue):
     global counter
@@ -113,8 +206,8 @@ async def consume(queue):
     while True:
         # wait for an item from the producer
         processed_filing_result = await queue.get()
-        # process_fields_to_counts(processed_filing_result, num_fields_counts)
-        process_filing_features(processed_filing_result, outlist)
+        process_fields_to_counts(processed_filing_result, num_fields_counts)
+        # process_filing_features(processed_filing_result, outlist)
         counter += 1
 
         # Notify the queue that the item has been processed
@@ -132,13 +225,13 @@ async def run(n):
     # the consumer is still awaiting for an item, cancel it
     consumer.cancel()
     print(counter)
-    #s = [(k, num_fields_counts[k]) for k in sorted(num_fields_counts, key=num_fields_counts.get, reverse=True)]
-    #for k,v in s:
-    #    print('{}, {}'.format(k, v))
-    with open(outfile, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(["EIN"] + EXTRACTABLE_FEATURE_FIELDS)
-        writer.writerows(outlist)
+    s = [(k, num_fields_counts[k]) for k in sorted(num_fields_counts, key=num_fields_counts.get, reverse=True)]
+    for k,v in s:
+        print('{}, {}'.format(k, v))
+    #with open(outfile, 'w') as f:
+    #    writer = csv.writer(f)
+    #    writer.writerow(["EIN"] + EXTRACTABLE_FEATURE_FIELDS)
+    #    writer.writerows(outlist)
     print("done")
 
 
