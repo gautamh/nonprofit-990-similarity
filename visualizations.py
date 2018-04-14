@@ -15,13 +15,14 @@ feature_cols = [u'GrossReceiptsAmt', u'VotingMembersGoverningBodyCnt', u'VotingM
 
 labels = df2["NTEE_CD"].astype('category').cat.codes.values
 features = df2[list(feature_cols)].values
+df2["NTEE_CD"] = df2["NTEE_CD"].astype('str').str[0]
 
 labels = labels[np.isfinite(features).all(axis=1)]
 features = features[np.isfinite(features).all(axis=1)]
 
 print("t-SNE starting")
 time_start = time.time()
-tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
+tsne = TSNE(n_components=2, verbose=1, perplexity=20, n_iter=300)
 tsne_results = tsne.fit_transform(df2.loc[:,feature_cols].values)
 
 print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
@@ -31,6 +32,6 @@ df_tsne['x-tsne'] = tsne_results[:,0]
 df_tsne['y-tsne'] = tsne_results[:,1]
 
 chart = ggplot( df_tsne, aes(x='x-tsne', y='y-tsne', color='NTEE_CD') ) \
-        + geom_point(size=70,alpha=0.1) \
+        + geom_point(size=6,alpha=0.15) \
         + ggtitle("tSNE dimensions colored by digit")
 chart.show()
