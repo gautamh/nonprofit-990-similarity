@@ -8,7 +8,7 @@ chardet==3.0.4
 dill==0.2.7.1
 docutils==0.14
 enum-compat==0.0.2
-eventlet==0.21.0
+eventlet==0.31.0
 future==0.16.0
 gapic-google-cloud-datastore-v1==0.15.3
 google-api-core==0.1.4
